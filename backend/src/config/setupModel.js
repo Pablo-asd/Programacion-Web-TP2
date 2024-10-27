@@ -6,4 +6,4 @@ const setupModel = async()=>{
     const students = Students.init(instanceDb)
 };
 
-setupModel()
+module.exports=setupModel;
