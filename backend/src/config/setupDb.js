@@ -24,7 +24,7 @@ const createInstance = async () => {
         console.log('Connection has been established successfully.');
         return instance;
     } catch (error) {
-        throw new Error('Unable to connecto to database');
+        throw new Error('Unable to connect to database');
     }
 };
 

@@ -16,6 +16,11 @@ app.set('query parse', str =>{
     return qs.parse(str);
 })
 
-app.use('/api/students',studentsRoutes);
-console.log("Server up");
+app.use('/api/students', studentsRoutes);
+
+
+app.listen(3000,()=>{
+    console.log("Server up");
+})
+
 module.exports=app;

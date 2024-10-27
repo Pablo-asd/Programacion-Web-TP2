@@ -1,8 +1,7 @@
-const sequelize = require("sequelize");
-const{DataTypes,Model} = require("sequelize");
+const{DataTypes,Model, where} = require("sequelize");
 
 class Student extends Model{
-    static init = sequelize =>{
+    static initModel(sequelize){
         super.init({
             id:{
                 type: DataTypes.INTEGER,
@@ -31,22 +30,26 @@ class Student extends Model{
             }
         }, {
             sequelize,
-            modelName: 'students'
+            modelName: 'students',
+            tableName: 'students'
         });
 
         return this;
     };
 
-    static getAll = async () =>{
-        return await this.findAll({
-            where:{
-                deleted:'0'
-            },
-            attributes:{
-                exclude: 'deleted, createdAt,updatedAt'
-            }
-        });
-    };
+    static async getAll() {
+        try {
+            return await this.findAll({
+                attributes: { exclude: ['deleted', 'createdAt', 'updatedAt'] }
+            });
+        } catch (error) {
+            console.error("Error in getAll:", error);
+            throw error;
+        }
+    }
+
+
+
 };
 
 module.exports = Student;

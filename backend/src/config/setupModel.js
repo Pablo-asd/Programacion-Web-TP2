@@ -1,9 +1,9 @@
-const {getSeqInstance} = require('./setupDb');
-const Students=require('../model/students');
+const { getSeqInstance } = require('./setupDb');
+const Student = require('../model/students');
 
-const setupModel = async()=>{
-    const instanceDb= await getSeqInstance();
-    const students = Students.init(instanceDb)
+const setupModel = async () => {
+    const instanceDb = await getSeqInstance();
+    Student.initModel(instanceDb); // Llamada correcta al método de inicialización
 };
 
-module.exports=setupModel;
+setupModel();
