@@ -5,7 +5,7 @@
  */
 
 var app = require('../src/app');
-var debug = require('debug')('ejemplo-dos:server');
+var debug = require('debug')('programacion-web-tp2:server');
 var http = require('http');
 
 /**

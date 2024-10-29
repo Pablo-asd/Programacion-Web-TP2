@@ -17,10 +17,8 @@ app.set('query parse', str =>{
 })
 
 app.use('/api/students', studentsRoutes);
-
-
-app.listen(3000,()=>{
-    console.log("Server up");
-})
+app.listen(3000, () => {
+    console.log("Server UP");
+}) 
 
 module.exports=app;

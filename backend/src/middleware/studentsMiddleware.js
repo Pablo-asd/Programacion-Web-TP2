@@ -1,12 +1,10 @@
 const validateBody = (req, res, next) => {
-    if (!req.body.name) {
+    if (!req.body.firstname) {
         res.status(400).json({
             message: 'name field is required.'
         });
-  
         return;
     }
-  
     next();
   };
   
