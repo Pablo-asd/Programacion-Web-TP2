@@ -2,9 +2,6 @@ const { Sequelize } = require('sequelize');
 
 let seqInstance = null;
 
-// Lo correcto es que nombre de base de datos, usuario, contraseña, host y dialect
-// deben estar configurados en un archivo .env, y encriptado
-
 const createInstance = async () => {
     const instance = new Sequelize(
         'institute', // nombre de base de datos

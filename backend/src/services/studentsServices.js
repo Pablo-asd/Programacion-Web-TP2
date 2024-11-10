@@ -1,55 +1,55 @@
-const {Op} = require('sequelize');
 const Student = require('../model/students');
 
-
-const findAll = async () =>{
-    try {
-        const students= await Student.getAll(); 
-        return students;
-    } catch (error) {
-        console.error('studentsServices: '+error);
-        throw error;
-    }
-};
-
-const create = async (student) =>{
-    try {
-        const lastStudent =await Student.findOne({
-            order:[['sid','DESC']],
-            attributes: ['sid']
-        });
-        const newSid = lastStudent ? lastStudent.sid +1:1;
-
-        const existingStudent = await Student.findOne({
-            where: {
-                [Op.or]:[
-                    {dni: student.dni},
-                    {email: student.email}
-                ],
-                deleted:0
-            }
-        });
-
-        if (existingStudent) {
-            throw new Error("Estudiante existente");
+class StudentService {
+    static async findAll() {
+        try {
+            return await Student.getAll();
+        } catch (error) {
+            console.error('Error en findAll:', error);
+            throw new Error('Error al obtener estudiantes');
         }
+    }
 
-        const newStudent = await Student.create({
-            sid: newSid, 
-            firstname: student.firstname,
-            lastname: student.lastname,
-            dni: student.dni,
-            email: student.email,
-            deleted:0
-        });
-        return newStudent;
-    } catch (error) {
-        console.error('studentsServices: '+error);
-        throw error;
+    static async create(studentData) {
+        try {
+            const lastSid = await Student.getLastSID();
+            const newSid = lastSid + 1;
+
+            const existingStudent = await Student.findByDniOrEmail(
+                studentData.dni,
+                studentData.email
+            );
+
+            if (existingStudent) {
+                throw new Error('Ya existe un estudiante con ese DNI o email');
+            }
+
+            return await Student.create({
+                ...studentData,
+                sid: newSid,
+                deleted: false
+            });
+        } catch (error) {
+            console.error('Error en create:', error);
+            throw error;
+        }
+    }
+
+    static async getAll(search = '', currentPage = 1, pageSize = 5) {
+        try {
+            const result = await Student.findAllWithPagination(search, currentPage, pageSize);
+            return {
+                items: result.rows,
+                total: result.count,
+                currentPage,
+                pageSize,
+                totalPages: Math.ceil(result.count / pageSize)
+            };
+        } catch (error) {
+            console.error('Error en getAll:', error);
+            throw new Error('Error al obtener estudiantes paginados');
+        }
     }
 }
 
-module.exports ={
-    findAll,
-    create
-};
+module.exports = StudentService;
