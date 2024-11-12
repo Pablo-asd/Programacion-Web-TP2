@@ -42,4 +42,24 @@ router.post('/', validateBody, async (req, res, next) => {
     }
 });
 
+router.delete('/:id', validateById, async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        await StudentService.deleteStudent(id);
+        
+        res.json({
+            success: true,
+            message: 'Estudiante eliminado correctamente'
+        });
+    } catch (error) {
+        if (error.message === 'Estudiante no encontrado') {
+            return res.status(404).json({
+                success: false,
+                message: error.message
+            });
+        }
+        next(error);
+    }
+});
+
 module.exports = router;

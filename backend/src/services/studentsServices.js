@@ -35,7 +35,6 @@ class StudentService {
         }
     }
 
-   
     static async getPaginated(search, currentPage, pageSize) {
         try {
             // Validar y convertir parámetros
@@ -55,6 +54,27 @@ class StudentService {
         } catch (error) {
             console.error('Error en getPaginated:', error);
             throw new Error('Error al obtener estudiantes paginados');
+        }
+    }
+
+    static async deleteStudent(id) {
+        try {
+            const student = await Student.findOne({
+                where: { 
+                    id,
+                    deleted: false 
+                }
+            });
+
+            if (!student) {
+                throw new Error('Estudiante no encontrado');
+            }
+
+            const result = await Student.softDelete(id);
+            return result;
+        } catch (error) {
+            console.error('Error en deleteStudent:', error);
+            throw error;
         }
     }
 }

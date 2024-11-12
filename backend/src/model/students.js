@@ -69,10 +69,9 @@ class Student extends Model {
         const offset = (currentPage - 1) * pageSize;
         
         const whereClause = {
-            deleted: false // Asumiendo que usas false en lugar de 0
+            deleted: false
         };
     
-        // Agregar condición de búsqueda si existe
         if (search && search.trim()) {
             whereClause[Op.or] = [
                 Sequelize.where(
@@ -97,9 +96,24 @@ class Student extends Model {
         });
 
         return result;
-    } catch (error) {
-        console.error('Error en findAllWithPagination:', error);
-        throw error;
+    }
+
+    static async softDelete(id) {
+        try {
+            const result = await this.update(
+                { deleted: true },
+                { 
+                    where: { 
+                        id,
+                        deleted: false 
+                    }
+                }
+            );
+            return result[0] > 0; // Retorna true si se actualizó algún registro
+        } catch (error) {
+            console.error('Error en softDelete:', error);
+            throw error;
+        }
     }
 }
 
