@@ -1,4 +1,4 @@
-const { DataTypes, Model, Op } = require("sequelize");
+const { Model, DataTypes, Op, Sequelize } = require('sequelize');
 
 class Student extends Model {
     static initModel(sequelize) {
@@ -65,25 +65,41 @@ class Student extends Model {
             }
         });
     }
-
-    static async findAllWithPagination(search, currentPage, pageSize) {
+    static async findAllWithPagination(search = '', currentPage = 1, pageSize = 5) {
         const offset = (currentPage - 1) * pageSize;
+        
         const whereClause = {
-            deleted: false,
-            ...(search && {
-                [Op.or]: [
-                    { lastname: { [Op.substring]: search } },
-                    { firstname: { [Op.substring]: search } }
-                ]
-            })
+            deleted: false // Asumiendo que usas false en lugar de 0
         };
+    
+        // Agregar condición de búsqueda si existe
+        if (search && search.trim()) {
+            whereClause[Op.or] = [
+                Sequelize.where(
+                    Sequelize.fn('LOWER', Sequelize.col('lastname')),
+                    Op.like,
+                    `%${search.trim().toLowerCase()}%`
+                )
+            ];
+        }
 
-        return this.findAndCountAll({
+        const result = await this.findAndCountAll({
             where: whereClause,
             limit: pageSize,
-            offset,
-            order: [['lastname', 'ASC'], ['firstname', 'ASC']]
+            offset: offset,
+            order: [
+                ['lastname', 'ASC'],
+                ['firstname', 'ASC']
+            ],
+            attributes: {
+                exclude: ['deleted', 'createdAt', 'updatedAt']
+            }
         });
+
+        return result;
+    } catch (error) {
+        console.error('Error en findAllWithPagination:', error);
+        throw error;
     }
 }
 

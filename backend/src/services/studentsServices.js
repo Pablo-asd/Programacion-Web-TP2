@@ -35,18 +35,25 @@ class StudentService {
         }
     }
 
-    static async getAll(search = '', currentPage = 1, pageSize = 5) {
+   
+    static async getPaginated(search, currentPage, pageSize) {
         try {
-            const result = await Student.findAllWithPagination(search, currentPage, pageSize);
+            // Validar y convertir parámetros
+            const page = Math.max(1, parseInt(currentPage));
+            const size = Math.max(1, Math.min(50, parseInt(pageSize) || 5)); // Máximo 50 registros por página
+            const searchTerm = search? search?.trim() : '';
+
+            const result = await Student.findAllWithPagination(searchTerm, page, size);
+
             return {
                 items: result.rows,
                 total: result.count,
-                currentPage,
-                pageSize,
-                totalPages: Math.ceil(result.count / pageSize)
+                currentPage: page,
+                pageSize: size,
+                totalPages: Math.ceil(result.count / size)
             };
         } catch (error) {
-            console.error('Error en getAll:', error);
+            console.error('Error en getPaginated:', error);
             throw new Error('Error al obtener estudiantes paginados');
         }
     }

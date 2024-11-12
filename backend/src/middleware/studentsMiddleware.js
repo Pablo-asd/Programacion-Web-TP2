@@ -27,29 +27,47 @@ const validateById = (req, res, next) => {
   next();
 };
 
-const validateUrlQuery = (req, res, next) => {
-  const { currentPage = 1, pageSize = 5, search = '' } = req.query;
-  
-  const page = Number(currentPage);
-  const size = Number(pageSize);
+const validatePaginationParams = (req, res, next) => {
+    try {
+        const { currentPage = 1, pageSize = 5, search = '' } = req.query;
 
-  if (isNaN(page) || page < 1 || isNaN(size) || size < 1) {
-      return res.status(400).json({
-          message: 'Parámetros de paginación inválidos'
-      });
-  }
+        // Validar que sean números
+        if (isNaN(currentPage) || isNaN(pageSize)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Los parámetros de paginación deben ser números'
+            });
+        }
 
-  req.query = {
-      currentPage: page,
-      pageSize: Math.min(size, 50), // Limitar tamaño máximo de página
-      search: search.trim()
-  };
-  
-  next();
+        // Validar rangos
+        if (currentPage < 1 || pageSize < 1) {
+            return res.status(400).json({
+                success: false,
+                message: 'Los parámetros de paginación deben ser mayores a 0'
+            });
+        }
+
+        // Validar tamaño máximo de página
+        if (pageSize > 50) {
+            return res.status(400).json({
+                success: false,
+                message: 'El tamaño de página no puede ser mayor a 50'
+            });
+        }
+
+        // Sanitizar búsqueda
+        req.query.search = search.trim();
+        req.query.currentPage = parseInt(currentPage);
+        req.query.pageSize = parseInt(pageSize);
+
+        next();
+    } catch (error) {
+        next(error);
+    }
 };
 
 module.exports = {
   validateBody,
   validateById,
-  validateUrlQuery
+  validatePaginationParams
 };

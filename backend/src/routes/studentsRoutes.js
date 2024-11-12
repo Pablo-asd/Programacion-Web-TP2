@@ -1,6 +1,6 @@
 const express = require('express');
 const StudentService = require('../services/studentsServices');
-const { validateById, validateBody, validateUrlQuery } = require('../middleware/studentsMiddleware');
+const { validateById, validateBody, validatePaginationParams } = require('../middleware/studentsMiddleware');
 
 const router = express.Router();
 
@@ -13,16 +13,23 @@ router.get('/', async (req, res, next) => {
     }
 });
 
-router.get('/paginated', validateUrlQuery, async (req, res, next) => {
+router.get('/paginated', validatePaginationParams, async (req, res) => {
     try {
-        const students = await StudentService.getAll(
-            req.query.search,
-            req.query.currentPage,
-            req.query.pageSize
+        const { search = '', currentPage = 1, pageSize = 5 } = req.query;
+        
+        const result = await StudentService.getPaginated(
+            search,
+            currentPage,
+            pageSize
         );
-        res.json(students);
+
+        res.json(result);
     } catch (error) {
-        next(error);
+        console.error('Error en ruta de paginación:', error);
+        res.status(500).json({
+            message: 'Error al obtener estudiantes',
+            error: error.message
+        });
     }
 });
 
