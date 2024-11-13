@@ -5,7 +5,7 @@ const { validateById, validateBody, validatePaginationParams } = require('../mid
 
 const router = express.Router();
 
-router.get('/2', async (req, res, next) => {
+router.get('/', async (req, res, next) => {
     try {
         const { search= '', currentPage= 1, pageSize= 5 } = req.query;
 

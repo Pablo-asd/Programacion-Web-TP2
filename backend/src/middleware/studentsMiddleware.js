@@ -7,6 +7,14 @@ const validateBody = (req, res, next) => {
   if (!dni) errors.push('El DNI es requerido');
   if (!email) errors.push('El email es requerido');
 
+  if (dni && (!/^\d{8}$/.test(dni))) {
+    errors.push('El DNI debe contener exactamente 8 dígitos numéricos');
+  }
+
+  if (email && (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))) {
+    errors.push('El formato del email no es válido');
+  }
+
   if (errors.length > 0) {
       return res.status(400).json({ errors });
   }
