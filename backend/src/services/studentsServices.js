@@ -38,9 +38,9 @@ class StudentService {
     static async getPaginated(search, currentPage, pageSize) {
         try {
             // Validar y convertir parámetros
-            const page = Math.max(1, parseInt(currentPage));
-            const size = Math.max(1, Math.min(50, parseInt(pageSize) || 5)); // Máximo 50 registros por página
-            const searchTerm = search? search?.trim() : '';
+            const page = Math.max(1, currentPage);
+            const size = Math.max(1, Math.min(50, pageSize || 5)); // Máximo 50 registros por página
+            const searchTerm = search || '';
 
             const result = await Student.findAllWithPagination(searchTerm, page, size);
 

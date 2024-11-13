@@ -11,7 +11,6 @@ class Student extends Model {
             sid: {
                 type: DataTypes.BIGINT,
                 allowNull: false,
-                unique: true
             },
             firstname: {
                 type: DataTypes.STRING(100),
@@ -24,12 +23,10 @@ class Student extends Model {
             dni: {
                 type: DataTypes.BIGINT,
                 allowNull: false,
-                unique: true
             },
             email: {
                 type: DataTypes.STRING(150),
                 allowNull: false,
-                unique: true,
                 validate: {
                     isEmail: true
                 }
@@ -72,12 +69,12 @@ class Student extends Model {
             deleted: false
         };
     
-        if (search && search.trim()) {
+        if (search) {
             whereClause[Op.or] = [
                 Sequelize.where(
                     Sequelize.fn('LOWER', Sequelize.col('lastname')),
                     Op.like,
-                    `%${search.trim().toLowerCase()}%`
+                    `%${search.toLowerCase()}%`
                 )
             ];
         }
